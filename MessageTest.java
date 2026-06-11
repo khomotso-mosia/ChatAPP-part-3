@@ -146,3 +146,149 @@ public class MessageTest {
                 "Sending a message over 250 characters should fail.");
     }
 }
+// =======================================================================
+    // PART 3 TESTS — six new test methods
+   // =======================================================================
+
+    
+    @Test
+    public void testSentMessagesArray_correctlyPopulated() {
+        // Create and send message 1 from the POE
+        Message msg1 = new Message("+27834557896", "Did you get the cake?");
+        msg1.SentMessage("send");
+
+        // Create and send message 4 from the POE (valid number used so send works)
+        Message msg4 = new Message("+27834484567", "It is dinner time!");
+        msg4.SentMessage("send");
+
+        // Both texts must now be inside the sentMessages array
+        assertTrue(Message.getSentMessages().contains("Did you get the cake?"),
+                "sentMessages should contain 'Did you get the cake?'");
+        assertTrue(Message.getSentMessages().contains("It is dinner time!"),
+                "sentMessages should contain 'It is dinner time!'");
+    }
+
+    
+    @Test
+    public void testDisplayLongestMessage_returnsCorrectMessage() {
+        // Add all five POE messages directly into the storedMessages array
+        Message.getStoredMessages().add("Did you get the cake?");
+        Message.getStoredMessages().add("Where are you? You are late! I have asked you to be on time.");
+        Message.getStoredMessages().add("Ok, I am leaving without you.");
+        Message.getStoredMessages().add("It is dinner time!");
+        Message.getStoredMessages().add("Hi Mike, can you join us for dinner tonight");
+
+        // The message object used here is just a vehicle to call the method
+        Message msg = new Message("+27834557896", "temp");
+        String result = msg.displayLongestMessage();
+
+        // The longest message must appear in the result
+        assertTrue(result.contains("Where are you? You are late! I have asked you to be on time."),
+                "displayLongestMessage should return the longest stored message.");
+    }
+
+   
+    @Test
+    public void testSearchByMessageID_returnsCorrectMessage() {
+        // Send exactly one message so we know index 0 belongs to this message
+        Message msg4 = new Message("+27834484567", "It is dinner time!");
+        msg4.SentMessage("send");
+
+        // Index 0 in messageIDs belongs to msg4 because it is the only sent message
+        String storedID = Message.getMessageIDs().get(0);
+
+        // Search for that ID
+        Message searcher = new Message("+27834557896", "temp");
+        String result = searcher.searchByMessageID(storedID);
+
+        // The result must contain the message text
+        assertTrue(result.contains("It is dinner time!"),
+                "searchByMessageID should return 'It is dinner time!' for that ID.");
+    }
+
+    
+    @Test
+    public void testSearchByRecipient_returnsAllMatchingMessages() {
+        // Two messages to the same recipient
+        Message msg2 = new Message("+27838884567",
+                "Where are you? You are late! I have asked you to be on time.");
+        msg2.SentMessage("send");
+
+        Message msg5 = new Message("+27838884567", "Ok, I am leaving without you.");
+        msg5.SentMessage("send");
+
+        // One message to a DIFFERENT recipient — must NOT appear in results
+        Message msg3 = new Message("+27834484567", "Did you get the cake?");
+        msg3.SentMessage("send");
+
+        // Search for the shared recipient
+        Message searcher = new Message("+27834557896", "temp");
+        String result = searcher.searchByRecipient("+27838884567");
+
+        // Both messages for +27838884567 must be in the result
+        assertTrue(result.contains("Where are you? You are late! I have asked you to be on time."),
+                "Result should contain the first message for +27838884567.");
+        assertTrue(result.contains("Ok, I am leaving without you."),
+                "Result should contain the second message for +27838884567.");
+    }
+
+    
+    @Test
+    public void testDeleteByHash_removesCorrectMessage() {
+        // Send exactly one message
+        Message msg2 = new Message("+27838884567",
+                "Where are you? You are late! I have asked you to be on time.");
+        msg2.SentMessage("send");
+
+        // Index 0 belongs to msg2 — it is the only sent message in this test
+        String storedHash = Message.getMessageHashes().get(0);
+
+        // Delete by that hash
+        Message deleter = new Message("+27834557896", "temp");
+        String result = deleter.deleteByHash(storedHash);
+
+        // Confirm the deleted message text appears in the result
+        assertTrue(result.contains("Where are you? You are late! I have asked you to be on time."),
+                "Delete result should contain the deleted message text.");
+
+        // Confirm the success phrase appears
+        assertTrue(result.contains("successfully deleted"),
+                "Delete result should confirm the message was successfully deleted.");
+    }
+
+    
+    @Test
+    public void testDisplayReport_containsRequiredFields() {
+        // Send two messages with different recipients
+        Message msg1 = new Message("+27834557896", "Did you get the cake?");
+        msg1.SentMessage("send");
+
+        Message msg2 = new Message("+27838884567",
+                "Where are you? You are late! I have asked you to be on time.");
+        msg2.SentMessage("send");
+
+        // Generate the full report
+        String report = Message.printMessages();
+
+        // Report must have the header
+        assertTrue(report.contains("Message Report"),
+                "Report should contain the 'Message Report' header.");
+
+        // Report must contain both recipients
+        assertTrue(report.contains("+27834557896"),
+                "Report should contain recipient +27834557896.");
+        assertTrue(report.contains("+27838884567"),
+                "Report should contain recipient +27838884567.");
+
+        // Report must contain both message texts
+        assertTrue(report.contains("Did you get the cake?"),
+                "Report should contain 'Did you get the cake?'");
+        assertTrue(report.contains("Where are you? You are late!"),
+                "Report should contain the second message text.");
+
+        // Report must contain hashes — hashes always include ':' separators
+        assertTrue(report.contains(":"),
+                "Report should contain message hashes with ':' separators.");
+    }
+
+} 
