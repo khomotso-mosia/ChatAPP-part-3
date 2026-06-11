@@ -179,6 +179,132 @@ public class Message{
                "Recipient: " + this.recipientNumber + "\n" +
                "Message: " + this.messageContent;
     }
+    // -----------------------------------------------------------------------
+    // PART 3 —  DISPLAY THE LONGEST MESSAGE
+    // Loops through storedMessages and returns the one with the most characters.
+    // -----------------------------------------------------------------------
+    public String displayLongestMessage() {
+        // Start with an empty string as the "longest so far"
+        String longest = "";
+ 
+        // Go through every message in the storedMessages array
+        for (String message : storedMessages) {
+            // If this message is longer than what we have so far, update longest
+            if (message.length() > longest.length()) {
+                longest = message;
+            }
+        }
+ 
+        // If nothing was found, tell the user
+        if (longest.isEmpty()) {
+            return "No stored messages found.";
+        }
+ 
+        return "Longest message: " + longest;
+    }
+ 
+    // -----------------------------------------------------------------------
+    // PART 3 —SEARCH BY MESSAGE ID
+    // The user types an ID. We look for it in messageIDs and return
+    // the matching message from sentMessages at the same position (index).
+    // This is called "parallel array searching".
+    // -----------------------------------------------------------------------
+    public String searchByMessageID(String id) {
+        // Loop through every ID we have stored
+        for (int i = 0; i < messageIDs.size(); i++) {
+            // Check if this ID matches what the user typed
+            if (messageIDs.get(i).equals(id)) {
+                // The message is at the SAME index in sentMessages
+                if (i < sentMessages.size()) {
+                    return "Message found: " + sentMessages.get(i);
+                }
+            }
+        }
+        // Nothing matched
+        return "Message not found.";
+    }
+ 
+    // -----------------------------------------------------------------------
+    // PART 3 — SEARCH BY RECIPIENT
+    // The user types a cell number. We find ALL messages sent to that number.
+    // There may be more than one result so we collect all matches.
+    // -----------------------------------------------------------------------
+    public String searchByRecipient(String recipient) {
+        StringBuilder results = new StringBuilder();
+ 
+        // Loop through recipientList (same size as sentMessages)
+        for (int i = 0; i < recipientList.size(); i++) {
+            if (recipientList.get(i).equals(recipient)) {
+                // Found a match — add the message to our results
+                results.append("- ").append(sentMessages.get(i)).append("\n");
+            }
+        }
+ 
+        // Return results or a "not found" message
+        if (results.length() == 0) {
+            return "No messages found for recipient: " + recipient;
+        }
+        return "Messages for " + recipient + ":\n" + results.toString();
+    }
+ 
+    // -----------------------------------------------------------------------
+    // PART 3 — DELETE BY MESSAGE HASH
+    // The user types a hash. We find it in messageHashes, then remove
+    // the matching entry from ALL the parallel arrays at that same index.
+    // -----------------------------------------------------------------------
+    public String deleteByHash(String hash) {
+        // Loop through messageHashes to find the matching one
+        for (int i = 0; i < messageHashes.size(); i++) {
+            if (messageHashes.get(i).equals(hash)) {
+ 
+                // Save the message text before deleting so we can confirm to the user
+                String deletedMessage = "";
+                if (i < sentMessages.size()) {
+                    deletedMessage = sentMessages.get(i);
+                    sentMessages.remove(i);      // Remove from sentMessages
+                    recipientList.remove(i);      // Remove matching recipient too
+                }
+ 
+                // Remove from the hash and ID arrays
+                messageHashes.remove(i);
+                messageIDs.remove(i);
+ 
+                // Return the success message in the format the POE requires
+                return "Message: " + deletedMessage + " successfully deleted.";
+            }
+        }
+        // Hash was not found in any array
+        return "Hash not found.";
+    }
+ 
+    // -----------------------------------------------------------------------
+    // PART 3 — DISPLAY MESSAGE REPORT (updated printMessages)
+    // Shows a full formatted report of all SENT messages including
+    // their hash, recipient, and message text.
+    // -----------------------------------------------------------------------
+    public static String printMessages() {
+        // Use StringBuilder to build up the full report text
+        StringBuilder report = new StringBuilder();
+        report.append("=== Message Report ===\n");
+ 
+        // If no messages have been sent yet
+        if (sentMessages.isEmpty()) {
+            report.append("No sent messages to display.\n");
+            return report.toString();
+        }
+ 
+        // Loop through each sent message using its index
+        for (int i = 0; i < sentMessages.size(); i++) {
+            report.append("------------------------------\n");
+            report.append("Hash      : ").append(messageHashes.get(i)).append("\n");
+            report.append("Recipient : ").append(recipientList.get(i)).append("\n");
+            report.append("Message   : ").append(sentMessages.get(i)).append("\n");
+        }
+ 
+        report.append("==============================\n");
+        return report.toString();
+    }
+ 
  
     // -----------------------------------------------------------------------
     // Getters — used by test classes
