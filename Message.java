@@ -123,7 +123,13 @@ public class Message{
                 // All checks passed — increase counter by 1
                 totalMessagesSent++;
                 this.numMessagesSent = totalMessagesSent;
-                this.messageHash = createMessageHash(); 
+                this.messageHash = createMessageHash();
+                // PART 3: Add to sentMessages, messageHashes, messageIDs, and recipientList arrays
+                sentMessages.add(this.messageContent);
+                messageHashes.add(this.messageHash);
+                messageIDs.add(this.messageID);
+                recipientList.add(this.recipientNumber);
+ 
                 return "Message successfully sent.";
  
             case "store":
