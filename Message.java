@@ -134,9 +134,17 @@ public class Message{
  
             case "store":
                 //Mssage saved as JSON and confirm to the user if stored.
+                 // PART 3: Add to sentMessages, messageHashes, messageIDs, and recipientList arrays
+                sentMessages.add(this.messageContent);
+                messageHashes.add(this.messageHash);
+                messageIDs.add(this.messageID);
+                recipientList.add(this.recipientNumber);
+ 
                 return "Message successfully stored.\n" + storeMessage();
  
             case "discard":
+                // PART 3: Add to disregardedMessages array
+                disregardedMessages.add(this.messageContent);
                 return "Message discarded.";
  
             default:
