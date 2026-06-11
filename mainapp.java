@@ -112,7 +112,8 @@ public class mainapp {
         
         // This is where it is validated if the user is logged in before the messaging menu is shown.
             if (loginSuccessPart2) {
-                
+
+            Message.loadStoredMessages();
                 // Now that the user has been validated and passed the login check greet the user.
             System.out.println("\nWelcome to Quickchat.");
             //This variable keeps track of how many messages have been sent in the sessions.
@@ -128,6 +129,7 @@ public class mainapp {
                 System.out.println("1) Send Messages");
                 System.out.println("2) Show recently sent messages");
                 System.out.println("3) Quit");
+                System.out.println("4) Stored Messages");  
                 System.out.print("Select an option: ");
       
                 //The number of the user types read is stored in 'choice'
