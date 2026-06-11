@@ -222,3 +222,90 @@ public class mainapp {
         input.close();
     }
 }
+// -----------------------------------------------------------------------
+    // PART 3 — STORED MESSAGES SUB-MENU
+    // This method runs when the user selects option 4 from the main menu.
+    // It shows its own loop with 7 options (a–f plus quit back to main).
+    // -----------------------------------------------------------------------
+    private static void storedMessagesMenu() {
+ 
+        boolean inSubMenu = true;
+ 
+        while (inSubMenu) {
+ 
+            //  This is where the sub-menu is displayed.
+            System.out.println("\n--- STORED MESSAGES MENU ---");
+            System.out.println("a) Display all stored messages");
+            System.out.println("b) Display longest message");
+            System.out.println("c) Search by message ID");
+            System.out.println("d) Search by recipient");
+            System.out.println("e) Delete message by hash");
+            System.out.println("f) Display full message report");
+            System.out.println("g) Return to main menu");
+            System.out.print("Select an option: ");
+ 
+            String subChoice = input.nextLine().trim().toLowerCase();
+ 
+            switch (subChoice) {
+ 
+                case "a":
+                    // This is where all of the stored messages are displayed
+                    // Shows every message that was loaded from the JSON file
+                    System.out.println("\n--- All Stored Messages ---");
+                    if (Message.getStoredMessages().isEmpty()) {
+                        System.out.println("No stored messages available.");
+                    } else {
+                        for (int i = 0; i < Message.getStoredMessages().size(); i++) {
+                            System.out.println((i + 1) + ". " + Message.getStoredMessages().get(i));
+                        }
+                    }
+                    break;
+ 
+                case "b":
+                    // Here the longest message is being displayed.
+                    // A temporary Message object is created just to call the method
+                    Message tempMsg = new Message("", "temp");
+                    System.out.println("\n" + tempMsg.displayLongestMessage());
+                    break;
+ 
+                case "c":
+                    // Search by message ID
+                    System.out.print("Enter Message ID to search: ");
+                    String searchID = input.nextLine().trim();
+                    Message msgForSearch = new Message("", "temp");
+                    System.out.println(msgForSearch.searchByMessageID(searchID));
+                    break;
+ 
+                case "d":
+                    // Search by recipient.
+                    System.out.print("Enter recipient number to search: ");
+                    String recipientSearch = input.nextLine().trim();
+                    Message msgForRecipient = new Message("", "temp");
+                    System.out.println(msgForRecipient.searchByRecipient(recipientSearch));
+                    break;
+ 
+                case "e":
+                    // Delete by hash
+                    System.out.print("Enter message hash to delete: ");
+                    String hashToDelete = input.nextLine().trim();
+                    Message msgForDelete = new Message("", "temp");
+                    System.out.println(msgForDelete.deleteByHash(hashToDelete));
+                    break;
+ 
+                case "f":
+                    // Display full report.
+                    System.out.println(Message.printMessages());
+                    break;
+ 
+                case "g":
+                    // Return to the main menu.
+                    inSubMenu = false;
+                    System.out.println("Returning to main menu...");
+                    break;
+ 
+                default:
+                    System.out.println("Invalid option. Please enter a, b, c, d, e, f, or g.");
+            }
+        }
+    }
+}
